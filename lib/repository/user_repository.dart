@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class UserRepository {
   final String _baseUrl = 'https://localhost:44384/login';
 
-  Future<void> login({
+  Future<String> login({
     required String username,
     required String password,
     required int role,
@@ -12,9 +12,8 @@ class UserRepository {
     final Uri url = Uri.parse(_baseUrl);
 
     final Map<String, dynamic> data = {
-      "Username": username,
-      "Password": password,
-      "Role": role,
+      "username": username,
+      "password": password
     };
 
     try {
@@ -27,13 +26,12 @@ class UserRepository {
       );
 
       if (response.statusCode == 200) {
-        print('Login successful: ${response.body}');
+        return response.body;
       } else {
-        print('Failed to login. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        return '';
       }
     } catch (e) {
-      print('An error occurred: $e');
+      return '';
     }
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:formulario_app/pages/feedbacks_view.dart';
+import 'package:formulario_app/pages/formulario_view.dart';
 import 'package:formulario_app/repository/user_repository.dart';
 
 class Login extends StatefulWidget {
@@ -12,16 +14,21 @@ class LoginPageState extends State<Login> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _isAdmin = false;
   final UserRepository _userRepository = UserRepository();
 
   void _login() async {
     String username = _usernameController.text;
     String password = _passwordController.text;
-    int role = _isAdmin ? 1 : 2;
 
-    await _userRepository.login(
-        username: username, password: password, role: role);
+    String token = await _userRepository.login(
+        username: username, password: password, role: 1);
+
+    if (token != '') {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => FeedbackListPage()));
+    }
   }
 
   @override
@@ -39,7 +46,7 @@ class LoginPageState extends State<Login> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Formulário UTFPR',
+              'Projeto Feedback',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
@@ -69,20 +76,6 @@ class LoginPageState extends State<Login> {
               ),
               obscureText: _obscurePassword,
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Checkbox(
-                  value: _isAdmin,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isAdmin = value ?? false;
-                    });
-                  },
-                ),
-                const Text('Admin'),
-              ],
-            ),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -92,6 +85,23 @@ class LoginPageState extends State<Login> {
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: const Text('Login'),
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const FormularioView()));
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+                child: const Text('Acessar como Cliente'),
               ),
             ),
           ],
